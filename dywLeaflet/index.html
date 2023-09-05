@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./leaflet/leaflet.css" />
+    <script src="./leaflet/leaflet-src.js"></script>
+    <script src="./leaflet/Plugins/esri/esri-leaflet.js"></script>
+    <script src="./leaflet/Plugins/esri/esri-leaflet-vector.js"></script>
+    <script src="./leaflet/Plugins/leaflet.ChineseTmsProviders.js"></script>
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        const map = L.map("map", {
+            minZoom: 2,
+            attributionControl: false,
+        });
+        var corner1 = L.latLng(22.872293, 114.366594);
+        let corner2 = L.latLng(22.369710, 114.827598);
+        let bounds = L.latLngBounds(corner1, corner2);
+
+        map.setMaxBounds(bounds);
+
+        L.esri.tiledMapLayer({
+            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        }).addTo(map);
+
+        // L.esri.Vector.vectorTileLayer(
+        //     "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer"
+        // ).addTo(map);
+
+        L.tileLayer.chinaProvider(
+            'TianDiTu.Satellite.Annotion',
+            {
+                key: '51671ff013bd0ce24c36433b7e7cb95a',
+                maxZoom: 18,
+                minZoom: 5,
+            }).addTo(map);
+
+
+        map.setView([22.753539, 114.550529], 13);
+
+    </script>
+</body>
+
+</html>
