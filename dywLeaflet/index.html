@@ -48,12 +48,91 @@
             'TianDiTu.Satellite.Annotion',
             {
                 key: '51671ff013bd0ce24c36433b7e7cb95a',
-                maxZoom: 18,
-                minZoom: 5,
+                maxZoom: 23,
+                minZoom: 10,
             }).addTo(map);
 
-
+        map.setMinZoom(11);
+        map.setMaxZoom(23);
         map.setView([22.753539, 114.550529], 13);
+
+        var colerMap = {
+            "yellow": "../src/assets/markicon/旗子/黄旗.png",
+            "red": "../src/assets/markicon/旗子/红旗.png",
+            "green": "../src/assets/markicon/旗子/浅绿色旗子.png"
+        }
+
+
+        let jsonData;
+        fetch('../data/风险地区.json')
+            .then(response => response.json())
+            .then(data => {
+                // 将数据存储到外部变量中
+                jsonData = data;
+                console.log(jsonData); // 这里可以访问外部变量中的数据
+            })
+            .catch(error => {
+                console.error('读取JSON文件时出错:', error);
+            });
+
+        var popup = L.popup({
+            offset: [0, -20]
+        });
+
+        function onMarkerClick(event) {
+            var marker =event.target;
+            var valueId = marker.feature.properties.Id;
+            console.log(valueId);
+            value = jsonData[valueId-1];
+            console.log(value)
+            popup.setContent(
+                '<b>' + value.id + '、' + value.name + '</b><br>'
+            );
+            popup.setLatLng(marker.getLatLng()).openOn(map)
+
+        }
+
+
+        function renderPoint(feature, latlng) {
+            color = feature.properties.type;
+            var marker =  L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl: colerMap[color],
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                })
+            });
+
+            marker.on('click', onMarkerClick);
+            return marker;
+        }
+
+
+
+        var pointList = {};
+        fetch('../data/风险地区4326.geojson')
+            .then(response => response.json())
+            .then(data => {
+                // 在这里可以使用data对象
+                console.log(data);
+                var layerGeo = L.geoJson(data, {
+                    pointToLayer: renderPoint
+                }).addTo(map);
+
+
+            })
+            .catch(error => {
+                // 处理错误
+                console.error('读取JSON文件时出错:', error);
+            });
+
+        // let pointList = getJson();
+
+        // console.log(pointList);
+
+        // L.getJson(pointList).addTo(map);
+
+
 
     </script>
 </body>
